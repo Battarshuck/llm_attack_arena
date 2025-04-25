@@ -5,11 +5,13 @@ import os
 from conversers import load_attack_and_target_models
 
 import sys
+from global_config import get_config  
+from utils import model_names_list, get_model_path, get_developer
+
 
 original_sys_path = sys.path.copy()
 project_root_path = os.path.join(os.path.dirname(__file__), '../../')
 sys.path.append(project_root_path)
-from global_config import get_config  
 config = get_config()
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
 #a reset function to reset the sys.path
@@ -64,8 +66,7 @@ if __name__ == '__main__':
     ########### Target model parameters ##########
     parser.add_argument(
         "--target-model",
-        default = "vicuna",
-        choices=["vicuna", 'falcon', 'llama',"gpt-3.5-turbo", "gpt-4"],
+        choices= model_names_list.keys(),
         help = "Name of target model.",
     )
     parser.add_argument(
@@ -93,22 +94,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     final_results = []
-    if 'vicuna' in args.target_model:
-        model_name = 'vicuna'
-        directory_name = 'vicuna'
-        print("vicuna model is loaded")
-    elif 'llama' in args.target_model:
-        model_name = 'llama-2'
-        directory_name='llama'
-        print("llama model is loaded")
-    elif 'gpt-3.5' in args.target_model:
-        model_name = 'gpt-3.5'
-        directory_name = 'gpt'
-    elif 'gpt-4' in args.target_model:
-        model_name = 'gpt-4'
-        directory_name = 'gpt'
+    if args.target_model in model_names_list.keys():
+        model_name = model_names_list[args.target_model]
+        directory_name = args.target_model
     else:
-        raise ValueError("Unknown model name, supports only vicuna and llama-2")
+        raise ValueError(f"Unknown model name, supports only {model_names_list.keys()}")
+    
     f = open(f'./res/data_{args.exp_name}.json',) 
     datas = json.load(f) 
     f.close() 

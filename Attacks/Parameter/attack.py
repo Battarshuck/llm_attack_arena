@@ -17,7 +17,7 @@ warnings.simplefilter("ignore")
 import json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from constants import model_names_list
+from utils import model_names_list, get_model_path
 
 # original_sys_path = sys.path.copy()
 # project_root_path = os.path.join(os.path.dirname(__file__), '../../')
@@ -99,16 +99,17 @@ def main():
     args.tune_frequency = args.tune_frequency.lower() == "true"
 
     openAI_model = False
-    WEIGHTS_PATH = model_path
-    TOKENIZER_PATH = WEIGHTS_PATH
 
     if args.model in model_names_list.keys():
         model_name = model_names_list[args.model]
-        model_path = f"../../models/{model_names_list[args.model]}"
+        model_path = get_model_path(model_name)
         directory_name = args.model
     else:
         model_name = 'unknown'
         raise ValueError("Unknown model name, supports only vicuna, llama-2, gpt-3.5 and gpt-4")
+    
+    WEIGHTS_PATH = model_path
+    TOKENIZER_PATH = WEIGHTS_PATH
     
     if openAI_model:
         model = models.OpenAILLM(model_path)

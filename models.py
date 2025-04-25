@@ -25,7 +25,7 @@ import openai
 from vllm import LLM as vllm
 from vllm import SamplingParams
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from constants import model_names_list
+from utils import model_names_list
 
 class LLM:
     def __init__(self):
@@ -335,7 +335,7 @@ class LocalVLLM(LLM):
     def __init__(self,
                  model_name,
                  model_path,
-                 gpu_memory_utilization=0.95,
+                 gpu_memory_utilization=0.90,
                  system_message=None,
 
                  ):
@@ -347,7 +347,7 @@ class LocalVLLM(LLM):
         self.model = vllm(
             self.model_path, gpu_memory_utilization=gpu_memory_utilization)
         
-        if system_message is None and 'Llama-2' in model_path:
+        if system_message is None and 'llama' in model_path:
             # monkey patch for latest FastChat to use llama2's official system message
             self.system_message = "You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe. " \
             "Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. " \

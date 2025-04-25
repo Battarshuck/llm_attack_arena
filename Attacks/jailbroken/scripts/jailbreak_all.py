@@ -13,6 +13,18 @@ __SEED = 666683321
 
 import jinja2
 import sys
+
+from jailbroken.backends import ChatBackend, Request
+from jailbroken.loaders import list_jailbreaks, load_backend, load_wrapper
+from jailbroken.utils import init_experiment, save_datapoint_jsonl, save_experiment_json
+from jailbroken.wrappers import (
+    AutoObfuscationWrapper,
+    DevModeWithRantiWrapper,
+    MessageWrapper,
+)
+from utils import model_names_list, get_model_path
+from global_config import get_config  
+
 # Get the directory of the current script.
 current_script_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -29,23 +41,12 @@ jinja_env = jinja2.Environment(
     undefined=jinja2.StrictUndefined,
 )
 
-from jailbroken.backends import ChatBackend, Request
-from jailbroken.loaders import list_jailbreaks, load_backend, load_wrapper
-from jailbroken.utils import init_experiment, save_datapoint_jsonl, save_experiment_json
-from jailbroken.wrappers import (
-    AutoObfuscationWrapper,
-    DevModeWithRantiWrapper,
-    MessageWrapper,
-)
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from constants import model_names_list
-
 
 original_sys_path = sys.path.copy()
 project_root_path = os.path.join(os.path.dirname(__file__), '../../../')
 sys.path.append(project_root_path)
-from global_config import get_config  
+
 config = get_config()
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
 #a reset function to reset the sys.path

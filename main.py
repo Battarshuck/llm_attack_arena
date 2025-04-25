@@ -3,7 +3,7 @@ from prompt_process import load_json
 import attack
 import defence
 import download_models
-from constants import model_names_list
+from utils import model_names_list
 
 def run_attack(model_name, attack_type):
     """

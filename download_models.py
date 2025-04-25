@@ -1,7 +1,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import os
-from constants import model_names_list
+from utils import model_names_list
 
 def download(name):
     model_name = model_names_list[name]

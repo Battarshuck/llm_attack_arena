@@ -22,7 +22,7 @@ import torch
 import gc
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from constants import model_names_list
+from utils import model_names_list, get_model_path
 
 # import sys
 
@@ -49,7 +49,7 @@ def process_raw_jailbreak_prompts(model_name,question_count):
 
     if args.model in model_names_list.keys():
         model_name = model_names_list[args.model]
-        model_path = f"../../models/{model_names_list[args.model]}"
+        model_path = get_model_path(model_name)
         directory_name = args.model
     else:
         model_name = 'unknown'
@@ -58,7 +58,7 @@ def process_raw_jailbreak_prompts(model_name,question_count):
     if openAI_model:
         local_model = models.OpenAILLM(model_path)
     else:
-        local_model = models.LocalVLLM(model_path, model_name=model_name)
+        local_model = models.LocalVLLM(model_path=model_path, model_name=model_name)
 
     # df = pd.read_csv(file_path)
     # df = df.sample(frac=1).reset_index(drop=True)

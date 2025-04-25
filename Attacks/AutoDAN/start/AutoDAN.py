@@ -11,11 +11,16 @@ import pandas as pd
 import json
 
 import sys
+from global_config import get_config  
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from utils import model_names_list, get_model_path, get_developer
+
+
 
 original_sys_path = sys.path.copy()
 project_root_path = os.path.join(os.path.dirname(__file__), '../../../')
 sys.path.append(project_root_path)
-from global_config import get_config  
 config = get_config()
 MAX_ALLOWED_ITERATION_PER_QUESTION = config.MAX_ALLOWED_ITERATION_PER_QUESTION
 REPEAT_TIME_PER_QUESTION = config.REPEAT_TIME_PER_QUESTION
@@ -72,11 +77,6 @@ def get_args():
     args = parser.parse_args()
     return args
 
-
-def get_developer(model_name):
-    developer_dict = {"llama": "Meta","vicuna":"lmsys"}
-    return developer_dict[model_name]
-
 def get_goals_and_targets(params):
     train_goals = []
     train_targets = []
@@ -95,9 +95,7 @@ if __name__ == '__main__':
     processed_prompts = []
     args = get_args()
     device = f'cuda:{args.device}'
-
-    model_path_dicts = {"llama": "../../../models/meta-llama/Llama-2-7b-chat-hf","vicuna" : "../../../models/lmsys/vicuna-7b-v1.5"}
-    model_path = model_path_dicts[args.model]
+    
     template_name = args.model
     # file_path = os.path.abspath('./Attacks/AutoDAN/start/initial_prompt.txt')
     adv_string_init = open(args.init_prompt_path, 'r',encoding='utf-8').readlines()[0]
@@ -110,17 +108,16 @@ if __name__ == '__main__':
     mutation = args.mutation
     API_key = args.API_key
     num_success_prompts = args.num_success_prompts
-    if 'vicuna' in model_path:
-        model_name = 'vicuna'
-        directory_name = 'vicuna'
-        print("vicuna model is loaded")
-    elif 'llama' in model_path:
-        model_name = 'llama-2'
-        directory_name='llama'
-        print("llama model is loaded")
+
+    if args.model in model_names_list.keys():
+        model_name = model_names_list[args.model]
+        directory_name = args.model
+        print(f"{model_name} model is loaded")
     else:
         model_name = 'unknown'
         raise ValueError("Unknown model name, supports only vicuna and llama-2")
+    
+    model_path = get_model_path(model_name)
 
     allow_non_ascii = False
     test_prefixes = [

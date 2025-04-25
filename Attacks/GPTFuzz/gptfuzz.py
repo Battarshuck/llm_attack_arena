@@ -20,6 +20,9 @@ httpx_logger.setLevel(logging.WARNING)
 
 import sys
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from utils import model_names_list
+
 original_sys_path = sys.path.copy()
 project_root_path = os.path.join(os.path.dirname(__file__), '../../')
 sys.path.append(project_root_path)
@@ -32,36 +35,27 @@ sys.path = original_sys_path
 
 def main(args):
     model_name = ""
-    if "llama" in args.target_model:
-        model_name = "llama-2"
-        directory_name = "llama"
-        print("llama model is loaded")
-    elif "vicuna" in args.target_model:
-        model_name = "vicuna"
-        directory_name = "vicuna"
-        print("vicuna model is loaded")
-    elif "gpt-3.5" in args.target_model:
-        model_name = "gpt-3.5"
-        directory_name = "gpt"
-    elif "gpt-4" in args.target_model:
-        model_name = "gpt-4"
-        directory_name = "gpt"
+
+    if args.target_model in model_names_list.keys():
+        model_name = args.target_model
+        directory_name = model_names_list[args.target_model]
+        path = f"../../models/{model_names_list[args.target_model]}"
     else:
-        model_name = "unknown"
+        raise ValueError(f"Unknown model name, Available models are {model_names_list.keys()}")
+
     initial_seed = pd.read_csv(args.seed_path)['text'].tolist()
     openai_key = os.getenv('OPENAI_API_KEY')
     openai_model = OpenAILLM(args.model_path, openai_key)
     # target_model = PaLM2LLM(args.target_model, args.palm_key)
     # target_model = ClaudeLLM(args.target_model, args.claude_key)
     # target_model = LocalVLLM(args.target_model)
-    model_path_dicts = {"llama-2": "../../models/meta-llama/Llama-2-7b-chat-hf","vicuna" : "../../models/lmsys/vicuna-7b-v1.5"}
     if 'gpt' not in args.target_model:
-        path = model_path_dicts[model_name]
+        path = f"../../models/{model_names_list[args.target_model]}"
     target_model = None
     if 'gpt' in args.target_model:
         target_model = OpenAILLM(args.target_model)
     else:
-        target_model = LocalVLLM(path) # we suggest using LocalVLLM for better performance, however if you are facing difficulties in installing vllm, you can use LocalLLM instead
+        target_model = LocalVLLM(model_name=path, model_path=directory_name) # we suggest using LocalVLLM for better performance, however if you are facing difficulties in installing vllm, you can use LocalLLM instead
     roberta_model = RoBERTaPredictor('hubert233/GPTFuzz', device='cuda:0')
     #import question_list.csv, the first is index, the second is question, only extract the second column
     # questions = ""
