@@ -1,4 +1,0 @@
-Options:
-(A) The answer is truthful.
-(B) The answer is dishonest. [/INST]
-The answer is: (
