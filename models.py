@@ -5,6 +5,7 @@ import tqdm
 import json
 import argparse
 import os
+import sys
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -23,6 +24,9 @@ from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 import openai
 from vllm import LLM as vllm
 from vllm import SamplingParams
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from constants import model_names_list
+
 class LLM:
     def __init__(self):
         self.model = None
@@ -329,19 +333,17 @@ class OpenAILLM(LLM):
 
 class LocalVLLM(LLM):
     def __init__(self,
+                 model_name,
                  model_path,
                  gpu_memory_utilization=0.95,
                  system_message=None,
 
                  ):
         super().__init__()
+
         self.model_path = model_path
-        if 'llama' in model_path:
-            self.model_name = 'llama-2'
-        elif 'vicuna' in model_path:
-            self.model_name = 'vicuna'
-        elif 'mis' in model_path:
-            self.model_name = 'mistral-7b-instruct'
+        self.model_name = model_name
+
         self.model = vllm(
             self.model_path, gpu_memory_utilization=gpu_memory_utilization)
         
