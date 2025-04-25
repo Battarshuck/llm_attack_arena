@@ -16,6 +16,8 @@ logging.basicConfig(level=logging.INFO)
 warnings.simplefilter("ignore")
 import json
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from constants import model_names_list
 
 # original_sys_path = sys.path.copy()
 # project_root_path = os.path.join(os.path.dirname(__file__), '../../')
@@ -96,29 +98,18 @@ def main():
     args.tune_presence = args.tune_presence.lower() == "true"
     args.tune_frequency = args.tune_frequency.lower() == "true"
 
-    model_path_dicts = {"gpt-3.5-turbo":"gpt-3.5-turbo","llama": "../../models/meta-llama/Llama-2-7b-chat-hf","vicuna" : "../../models/lmsys/vicuna-7b-v1.5"}
-    model_path = model_path_dicts[args.model]
-    # model_name = modeltype2path[args.model]
     openAI_model = False
     WEIGHTS_PATH = model_path
     TOKENIZER_PATH = WEIGHTS_PATH
-    if 'llama' in model_path:
-        model_name = 'llama-2'
-        directory_name='llama'
-    elif 'gpt-3.5' in model_path:
-        model_name = 'gpt-3.5'
-        openAI_model = True
-        directory_name='gpt'
-    elif 'vicuna' in model_path:
-        model_name = 'vicuna'
-        directory_name='vicuna'
-    elif 'gpt-4' in model_path:
-        model_name = 'gpt-4'
-        openAI_model = True
-        directory_name='gpt'
+
+    if args.model in model_names_list.keys():
+        model_name = model_names_list[args.model]
+        model_path = f"../../models/{model_names_list[args.model]}"
+        directory_name = args.model
     else:
         model_name = 'unknown'
         raise ValueError("Unknown model name, supports only vicuna, llama-2, gpt-3.5 and gpt-4")
+    
     if openAI_model:
         model = models.OpenAILLM(model_path)
     else:

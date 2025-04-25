@@ -38,6 +38,9 @@ from jailbroken.wrappers import (
     MessageWrapper,
 )
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from constants import model_names_list
+
 
 original_sys_path = sys.path.copy()
 project_root_path = os.path.join(os.path.dirname(__file__), '../../../')
@@ -100,22 +103,10 @@ def main():
     args = parser.parse_args()
     init_experiment(args.handle)
     save_experiment_json("args", vars(args))
-    if 'vicuna' in args.model:
-        model_name_file = 'vicuna'
-        directory_name = 'vicuna'
-        print("vicuna model is loaded")
-    elif 'llama' in args.model:
-        model_name_file = 'llama-2'
-        directory_name='llama'
-        print("llama model is loaded")
-    elif 'gpt-3.5' in args.model:
-        model_name_file = 'gpt-3.5'
-        directory_name='gpt'
-        print("gpt 3.5 model is loaded")
-    elif 'gpt-4' in args.model:
-        model_name_file = 'gpt-4'
-        directory_name='gpt'
-        print("gpt 4 model is loaded")
+    
+    if args.model in model_names_list.keys():
+        model_name = model_names_list[args.model]
+        directory_name = args.model
     else:
         model_name_file = 'unknown'
         raise ValueError("Unknown model name, supports only vicuna, llama-2, gpt-3.5 and gpt-4")

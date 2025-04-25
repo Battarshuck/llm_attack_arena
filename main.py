@@ -3,6 +3,7 @@ from prompt_process import load_json
 import attack
 import defence
 import download_models
+from constants import model_names_list
 
 def run_attack(model_name, attack_type):
     """
@@ -47,54 +48,11 @@ def run_attack(model_name, attack_type):
     else:
         print("Attack type not recognized.")
 
-def run_defense(model_name, defense_type):
-    """
-    Apply a defense mechanism to a specified model using the chosen defense type.
-    Please Note: If model_name is expected to certain defense, the file_path should be about that model.
-    The reason is you can not check modelA response with modelB to see if the defense is working.
-    """
-    if 'llama' in model_name:
-        directory = "llama"
-        suffix = "llama-2"
-    elif 'vicuna' in model_name:
-        directory = "vicuna"
-        suffix = "vicuna"
-    elif 'gpt' in model_name:
-        directory = "gpt"
-        suffix = "gpt-3.5"
-    file_path = f"../../Results/{directory}/Merged_{suffix}.json"
-    if defense_type == "RALLM":
-        print(f"Applying RALLM defense to {model_name} using file {file_path}")
-        defence.RALLM(model=model_name, file=file_path).run()
-    elif defense_type == "Baseline":
-        
-        print(f"Applying Baseline defense to {model_name} using file {file_path}")
-        defence.Baseline(model=model_name, file=file_path).run()
-    elif defense_type == "Aegis":
-        
-        print(f"Applying Aegis defense to {model_name} using file {file_path}")
-        defence.Aegis(file=file_path).run()
-    elif defense_type == "LLMGuard":
-        
-        print(f"Applying LLMGuard defense to {model_name} using file {file_path}")
-        defence.LLMGuard(file=file_path).run()
-    elif defense_type == "Smooth":
-        print(f"Applying Smooth defense to {model_name} using file {file_path}")
-        defence.Smooth(model=model_name, file=file_path).run()
-    elif defense_type == "Moderation":
-        print(f"Applying Moderation defense to {model_name} using file {file_path}")
-        defence.Moderation(file_path=file_path).run()
-    elif defense_type == "BergeonMethod":
-        print(f"Applying BergeonMethod defense to {model_name} using file {file_path}")
-        defence.BergeonMethod(file_path=file_path).run()
-    else:
-        print("Defense type not recognized.")
-
 def main():
     parser = argparse.ArgumentParser(description="Run attack and defense mechanisms on AI models")
-    parser.add_argument('--model', choices=['gpt-3.5-turbo', 'llama', 'vicuna','vicuna13','mistral'], required=False, help='Model to attack or defend')
-    parser.add_argument('--mode', choices=['attack', 'defense','process'], required=False, help='Whether to run an attack or apply a defense or process the results.')
-    parser.add_argument('--type', required=False, help='Type of attack or defense to run')
+    parser.add_argument('--model', choices=model_names_list.keys(), required=False, help='Model to attack or defend')
+    parser.add_argument('--mode', choices=['attack','process'], required=False, help='Whether to run an attack or apply a defense or process the results.')
+    parser.add_argument('--type', required=False, help='Type of attack to run')
     parser.add_argument('--need-download', required=False,default="false", help='do you need to download the model?')
     args = parser.parse_args()
 
@@ -109,8 +67,6 @@ def main():
 
     if args.mode == 'attack':
         run_attack(args.model, args.type)
-    elif args.mode == 'defense':
-        run_defense(args.model, args.type)
     elif args.mode == 'process':
         ##NOTE This must happen before the defense is applied
         load_json(f'./Results/{args.model}')
