@@ -2,4 +2,4 @@
 $CurrentDir = Get-Location
 
 # Run the Docker container with volume mapping
-docker run -it --rm -v "$($CurrentDir.Path):/workspace" ltroin/llm_arena
+docker run --gpus all -it --rm -v "$($CurrentDir.Path):/workspace" my_llm_arena
