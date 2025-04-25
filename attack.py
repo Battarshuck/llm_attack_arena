@@ -235,7 +235,7 @@ class Tap(BaseAttackModel):
         # Set up default parameters
         super().__init__()
         self.parameters = {
-            'target-model':model, #["vicuna", 'falcon', 'llama',"gpt-3.5-turbo", "gpt-4"]
+            'target-model':model,
             'attack-model':'vicuna13', #gpt-3.5-turbo or local llm
             'evaluator-model':"gpt-4-1106-preview",
             'branching-factor':4,
@@ -266,7 +266,7 @@ class Pair(BaseAttackModel):
         # Set up default parameters
         super().__init__()
         self.parameters = {
-            'target-model':model, #["vicuna", 'falcon', 'llama-2',"gpt-3.5-turbo", "gpt-4"]
+            'target-model':model,
             'attack-model':'vicuna13',
             'judge-model':'gpt-4',
             'n-streams': 20,
@@ -325,7 +325,7 @@ class TemplateJailbreak(BaseAttackModel):
         # Set up default parameters
         super().__init__()
         self.parameters = {
-            'model_path':model, #[llama2,vicuna,gpt-3.5-turbo]
+            'model':model,
             'question_count':100,
         }
 
@@ -352,7 +352,7 @@ class Parameters(BaseAttackModel):
         # Set up default parameters
         super().__init__()
         self.parameters = {
-            'model':model, #[llama2,vicuna,gpt-3.5-turbo]
+            'model':model,
             'tune_temp':"true",
             'tune_topk':"true",
             'tune_topp':"true",
